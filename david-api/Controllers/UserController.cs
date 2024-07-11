@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using david_api.DTO;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Newtonsoft.Json;
 using webapp.DAL.Models;
@@ -10,10 +12,15 @@ namespace david_api.Controllers
     public class UserController : ControllerBase
     {
         private UserRepository userRepo;
-
+        private IMapper mapper;
         public UserController(UserRepository userRepo)
         {
             this.userRepo = userRepo;
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<UserDTO, User>().ForMember("id", x => x.MapFrom(c => c.employeeId));
+            });
+            mapper = config.CreateMapper();
         }
 
         [HttpGet(Name = "getAllUser")]
@@ -24,18 +31,19 @@ namespace david_api.Controllers
         }
 
         [HttpPost(Name = "CreateUser")]
-        public async Task<IActionResult> Create([FromBody] User user)
+        public async Task<IActionResult> Create([FromBody] UserDTO user)
         {
-            var newuser = await userRepo.CreateWithEncryptedPasswordAsync(user);
+            var newuser = mapper.Map<User>(user);
+            await userRepo.CreateWithEncryptedPasswordAsync(newuser);
             return new OkObjectResult(newuser);
         }
 
         //login can be done with username or employee id and password
-
         [HttpPost("login", Name = "LoginUser")]
-        public async Task<IActionResult> Login([FromBody] User user)
+        public async Task<IActionResult> Login([FromBody] UserDTO user)
         {
-            var accept = await userRepo.MatchUserPasswordExist(user);
+            var loginDetail = mapper.Map<User>(user);
+            var accept = await userRepo.MatchUserPasswordExist(loginDetail);
             return new OkObjectResult(accept ? "Login berhasil, nanti dikasih jwt token tapi belom implemen hehe" : "Login gagal");
         }
 
