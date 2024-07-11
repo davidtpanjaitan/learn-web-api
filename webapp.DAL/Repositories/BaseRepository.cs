@@ -19,18 +19,18 @@ namespace webapp.DAL.Repositories
             _container = client.GetContainer(databaseName, containerName);
         }
 
-        public async Task<T> GetByIdAsync(string id)
+        public virtual async Task<T> GetByIdAsync(string id)
         {
             var response =  await _container.ReadItemAsync<T>(id, new PartitionKey(partitionKey));
             return response.Resource;
         }
-        public async Task<List<T>> GetAllAsync()
+        public virtual async Task<List<T>> GetAllAsync()
         {
             var query = _container.GetItemQueryIterator<T>("SELECT * FROM c");
             var response = await query.ReadNextAsync();
             return response.ToList();
         }
-        public async Task<PagedResult<T>> GetAsyncPaged(int pageSize, int pageNumber)
+        public virtual async Task<PagedResult<T>> GetAsyncPaged(int pageSize, int pageNumber)
         {
             var query = _container.GetItemQueryIterator<T>(
                 new QueryDefinition($"SELECT * FROM c ORDER BY c.createdDate DESC OFFSET {pageNumber*pageSize} LIMIT {pageSize}"),
@@ -65,20 +65,20 @@ namespace webapp.DAL.Repositories
             return totalCount;
         }
 
-        public async Task<T> CreateAsync(T item)
+        public virtual async Task<T> CreateAsync(T item)
         {
             item.id = Guid.NewGuid().ToString();
             var response = await _container.CreateItemAsync(item, new PartitionKey(partitionKey));
             return response.Resource;
         }
 
-        public async Task<T> UpdateAsync(T item)
+        public virtual async Task<T> UpdateAsync(T item)
         {
             var response = await _container.UpsertItemAsync(item, new PartitionKey(partitionKey));
             return response.Resource;
         }
 
-        public async Task<bool> DeleteAsync(string id)
+        public virtual async Task<bool> DeleteAsync(string id)
         {
             try
             {

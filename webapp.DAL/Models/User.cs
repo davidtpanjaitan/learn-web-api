@@ -9,6 +9,7 @@ namespace webapp.DAL.Models
 {
     public class User : BaseModel
     {
+        //id base model isi employee number
         public string username { get; set; }
         public string password { get; set; }
         public string role { get; set; }

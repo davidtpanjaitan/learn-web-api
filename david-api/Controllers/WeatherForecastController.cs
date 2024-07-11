@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace david_api.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]
@@ -18,8 +17,14 @@ namespace david_api.Controllers
             _logger = logger;
         }
 
-        [HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<WeatherForecast> Get()
+        [HttpGet("")]
+        public IActionResult Get()
+        {
+            return new OkObjectResult("server is running");
+        }
+
+        [HttpGet("weather", Name = "GetWeatherForecast")]
+        public IEnumerable<WeatherForecast> GetWeather()
         {
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {

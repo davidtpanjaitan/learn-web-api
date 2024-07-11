@@ -9,7 +9,9 @@ internal class Program
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
-        var configBuilder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json");
+        var configBuilder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json")
+            .AddEnvironmentVariables();
         var config = configBuilder.Build();
 
         string cosmosDbConnectionString = config["CosmosDbConnectionString"];
@@ -24,6 +26,7 @@ internal class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         builder.Services.AddScoped((service) => new LokasiRepository(cosmosClient, databaseName));
+        builder.Services.AddScoped((service) => new UserRepository(cosmosClient, databaseName));
 
         var app = builder.Build();
 
