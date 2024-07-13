@@ -27,6 +27,11 @@ internal class Program
         builder.Services.AddSwaggerGen();
         builder.Services.AddScoped((service) => new LokasiRepository(cosmosClient, databaseName));
         builder.Services.AddScoped((service) => new UserRepository(cosmosClient, databaseName));
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAllOrigin",
+                builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+        });
 
         var app = builder.Build();
 
@@ -36,6 +41,7 @@ internal class Program
             app.UseSwagger();
             app.UseSwaggerUI();
         //}
+        app.UseCors("AllowAllOrigin");
 
         app.UseHttpsRedirection();
 
