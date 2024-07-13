@@ -70,7 +70,7 @@ namespace david_api.Controllers
             return new OkObjectResult(result);
         }
 
-        [HttpPut("{id}/approve-lokasi")]
+        [HttpPut("{id}/approve-done")]
         public async Task<IActionResult> ApproveByAdmin([FromRoute] string id, [FromBody] ApprovalDTO dto)
         {
             var result = await panenRepo.ApprovePanenByAdmin(id, dto.approve, dto.idApprover, dto.namaApprover);
