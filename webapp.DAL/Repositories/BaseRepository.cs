@@ -26,7 +26,7 @@ namespace webapp.DAL.Repositories
         }
         public virtual async Task<List<T>> GetAllAsync()
         {
-            var query = _container.GetItemQueryIterator<T>("SELECT * FROM c");
+            var query = _container.GetItemQueryIterator<T>("SELECT * FROM c ORDER BY c.createdDate DESC");
             var response = await query.ReadNextAsync();
             return response.ToList();
         }
