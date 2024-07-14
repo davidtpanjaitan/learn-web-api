@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Newtonsoft.Json;
+using webapp.DAL.Enum;
 using webapp.DAL.Models;
 using webapp.DAL.Repositories;
 
@@ -23,12 +25,14 @@ namespace david_api.Controllers
             return new OkObjectResult(res);
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPost(Name = "CreateLokasi")]
         public async Task<IActionResult> Create([FromBody] Lokasi lokasi)
         {
             var newlokasi = await lokasiRepo.CreateAsync(lokasi);
             return new OkObjectResult(newlokasi);
         }
+
 
         [HttpGet("{id}", Name = "GetLokasiById")]
         public async Task<IActionResult> Get( [FromRoute] string id)
@@ -41,6 +45,7 @@ namespace david_api.Controllers
             return new OkObjectResult(lokasi);
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPut("{id}", Name = "UpdateLokasi")]
         public async Task<IActionResult> UpdateLokasi([FromRoute] string id, [FromBody] Lokasi updatedLokasi)
         {
@@ -49,6 +54,7 @@ namespace david_api.Controllers
             return new OkObjectResult(updatedLokasi);
         }
 
+        [Authorize(Roles = "admin")]
         [HttpDelete("{id}", Name = "DeleteLokasi")]
         public async Task<IActionResult> DeleteLokasi([FromRoute] string id)
         {

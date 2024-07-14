@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace webapp.DAL.Tools
 {
-    internal class PasswordEncryption
+    internal class EncryptionService
     {
         private static string seed = "arandomseedforsgiharvestencryptionablublubluimpomusgkgiqgjwrt";
 

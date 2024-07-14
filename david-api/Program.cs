@@ -1,6 +1,8 @@
 using Microsoft.Azure.Cosmos;
 using webapp.DAL.Repositories;
 using Microsoft.Extensions.Configuration;
+using webapp.DAL.Tools;
+using david_api.Middlewares;
 
 internal class Program
 {
@@ -16,6 +18,9 @@ internal class Program
 
         string cosmosDbConnectionString = config["CosmosDbConnectionString"];
         string databaseName = config["CosmosDbDatabaseName"];
+        string key = config["jwtkey"];
+        string issuer = config["jwtissuer"];
+        string audience = config["jwtaudience"];
 
 
         CosmosClient cosmosClient = new CosmosClient(cosmosDbConnectionString);
@@ -33,6 +38,7 @@ internal class Program
                 builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
         });
 
+
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
@@ -42,6 +48,8 @@ internal class Program
             app.UseSwaggerUI();
         //}
         app.UseCors("AllowAllOrigin");
+
+        app.UseMiddleware<TokenMiddleware>(key, issuer, audience);
 
         app.UseHttpsRedirection();
 

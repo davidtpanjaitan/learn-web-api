@@ -16,16 +16,19 @@ namespace webapp.DAL.Repositories
 
         public async Task<User> CreateWithEncryptedPasswordAsync(User item)
         {
-            item.password = PasswordEncryption.encryptSeeded(item.password);
+            item.password = EncryptionService.encryptSeeded(item.password);
             return await base.CreateAsync(item);
         }
 
-        public async Task<bool> MatchUserPasswordExist(User item)
+        public async Task<string> MatchUserPasswordExist(User item)
         {
-            var enteredPassword = PasswordEncryption.encryptSeeded(item.password);
-            var existingUser = _container.GetItemLinqQueryable<User>().FirstOrDefault(p => (p.username == item.username || p.id == item.id) && p.password == item.password);
+            var enteredPassword = EncryptionService.encryptSeeded(item.password);
+            var existingUserQuery = await _container
+                .GetItemQueryIterator<User>($"SELECT * FROM c WHERE (c.id = '{item.id}' OR c.username = '{item.username}') AND c.password = '{enteredPassword}'")
+                .ReadNextAsync();
+            var existingUser = existingUserQuery.FirstOrDefault();
             
-            return existingUser != null;
+            return existingUser == null ? "" : existingUser.role;
         }
     }
 }
