@@ -25,7 +25,6 @@ namespace david_api.Controllers
             return new OkObjectResult(res);
         }
 
-        [Authorize(Roles = "admin")]
         [HttpPost(Name = "CreateLokasi")]
         public async Task<IActionResult> Create([FromBody] Lokasi lokasi)
         {
@@ -45,7 +44,6 @@ namespace david_api.Controllers
             return new OkObjectResult(lokasi);
         }
 
-        [Authorize(Roles = "admin")]
         [HttpPut("{id}", Name = "UpdateLokasi")]
         public async Task<IActionResult> UpdateLokasi([FromRoute] string id, [FromBody] Lokasi updatedLokasi)
         {
@@ -54,7 +52,6 @@ namespace david_api.Controllers
             return new OkObjectResult(updatedLokasi);
         }
 
-        [Authorize(Roles = "admin")]
         [HttpDelete("{id}", Name = "DeleteLokasi")]
         public async Task<IActionResult> DeleteLokasi([FromRoute] string id)
         {
