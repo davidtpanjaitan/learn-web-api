@@ -33,6 +33,7 @@ internal class Program
         builder.Services.AddScoped((service) => new LokasiRepository(cosmosClient, databaseName));
         builder.Services.AddScoped((service) => new UserRepository(cosmosClient, databaseName));
         builder.Services.AddScoped((service) => new PanenRepository(cosmosClient, databaseName));
+        builder.Services.AddScoped((service) => new ProdukRepository(cosmosClient, databaseName));
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("AllowAllOrigin",

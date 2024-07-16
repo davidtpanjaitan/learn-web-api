@@ -33,7 +33,7 @@ namespace david_api.Controllers
             audience = config["jwtaudience"];
             var mappingconfig = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<UserDTO, User>().ForMember("id", x => x.MapFrom(c => c.employeeId));
+                cfg.CreateMap<UserDTO, User>().ForMember(p => p.id, x => x.MapFrom(c => c.employeeId));
             });
             mapper = mappingconfig.CreateMapper();
 

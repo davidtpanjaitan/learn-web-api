@@ -30,6 +30,7 @@ namespace webapp.DAL.Repositories
                     id = GeneratePanenId(i),
                     idLokasi = idLokasi,
                     namaLokasi = namaLokasi,
+                    status = Constants.PanenStatus.GENERATED.ToString(),
                 };
                 result.Add(panen);
                 batch.CreateItem(panen);
@@ -43,9 +44,9 @@ namespace webapp.DAL.Repositories
             var panen = _container.GetItemLinqQueryable<Panen>().First(p => p.id == idPanen);
             panen.idPICPanen = idApprover;
             panen.namaPICPanen = namaApprover;
-            if (panen.status == Constants.Status.SUBMITTED.ToString() && approve)
+            if (panen.status == Constants.PanenStatus.SUBMITTED.ToString() && approve)
             {
-                panen.status = Constants.Status.PIC_APPROVED.ToString();
+                panen.status = Constants.PanenStatus.PIC_APPROVED.ToString();
             }
             await _container.UpsertItemAsync(panen);
             return panen;
@@ -58,9 +59,9 @@ namespace webapp.DAL.Repositories
             panen.namaPetugasWarehouse = namaApprover;
             panen.beratWarehouse = beratBaru;
             panen.catatanWarehouse = catatan;
-            if (panen.status == Constants.Status.PIC_APPROVED.ToString() && approve)
+            if (panen.status == Constants.PanenStatus.PIC_APPROVED.ToString() && approve)
             {
-                panen.status = Constants.Status.ARRIVED_WAREHOUSE.ToString();
+                panen.status = Constants.PanenStatus.ARRIVED_WAREHOUSE.ToString();
             }
             await _container.UpsertItemAsync(panen);
             return panen;
@@ -71,9 +72,9 @@ namespace webapp.DAL.Repositories
             var panen = _container.GetItemLinqQueryable<Panen>().First(p => p.id == idPanen);
             panen.idAdmin = idApprover;
             panen.namaAdmin = namaApprover;
-            if (panen.status == Constants.Status.ARRIVED_WAREHOUSE.ToString() && approve)
+            if (panen.status == Constants.PanenStatus.ARRIVED_WAREHOUSE.ToString() && approve)
             {
-                panen.status = Constants.Status.ADMIN_CONFIRMED.ToString();
+                panen.status = Constants.PanenStatus.ADMIN_CONFIRMED.ToString();
             }
             await _container.UpsertItemAsync(panen);
             return panen;

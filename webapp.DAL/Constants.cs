@@ -8,9 +8,14 @@ namespace webapp.DAL
 {
     public class Constants
     {
-        public enum Status
+        public enum PanenStatus
         {
             GENERATED, SUBMITTED, PIC_APPROVED, ARRIVED_WAREHOUSE, ADMIN_CONFIRMED
+        }
+
+        public enum ProdukStatus
+        {
+            GENERATED, SUBMITTED, ADMIN_APPROVED
         }
     }
 }

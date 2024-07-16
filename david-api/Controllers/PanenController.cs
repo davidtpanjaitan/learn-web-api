@@ -34,7 +34,7 @@ namespace david_api.Controllers
         [HttpPost("generate", Name ="GeneratePanenByLokasi")]
         public async Task<IActionResult> Generate([FromBody] GeneratePanenDTO dto)
         {
-            var listNewPanen = await panenRepo.GeneratePanenForLokasi(dto.IdLokasi, dto.NamaLokasi, dto.Jumlah);
+            var listNewPanen = await panenRepo.GeneratePanenForLokasi(dto.idLokasi, dto.namaLokasi, dto.jumlah);
             return new OkObjectResult(listNewPanen);
         }
 

@@ -2,8 +2,8 @@
 {
     public class GeneratePanenDTO
     {
-        public string IdLokasi { get; set; }
-        public string NamaLokasi { get; set; }
-        public int Jumlah { get; set; }
+        public string idLokasi { get; set; }
+        public string namaLokasi { get; set; }
+        public int jumlah { get; set; }
     }
 }
