@@ -8,12 +8,14 @@ namespace webapp.DAL.DTO
 {
     public class LoginResult
     {
-        public LoginResult(string role, string token)
+        public LoginResult(string username, string role, string token)
         {
+            this.username = username;
             this.role = role;
             this.token = token;
         }
 
+        public string username { get; set; }
         public string role { get; set; }
         public string token { get; set; }
     }

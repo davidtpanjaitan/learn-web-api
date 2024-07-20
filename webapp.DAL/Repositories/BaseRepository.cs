@@ -67,9 +67,16 @@ namespace webapp.DAL.Repositories
 
         public virtual async Task<T> CreateAsync(T item)
         {
-            item.id = Guid.NewGuid().ToString();
-            var response = await _container.CreateItemAsync(item, new PartitionKey(partitionKey));
-            return response.Resource;
+            try
+            {
+                item.id = Guid.NewGuid().ToString();
+                var response = await _container.CreateItemAsync(item, new PartitionKey(partitionKey));
+                return response.Resource;
+            }
+            catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+            {
+                throw new Exception("Username not unique");
+            }
         }
 
         public virtual async Task<T> UpdateAsync(T item)

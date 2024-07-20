@@ -2,14 +2,13 @@
 using david_api.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
-using Newtonsoft.Json;
-using System.Security.Claims;
+using Microsoft.Azure.Cosmos;
 using webapp.DAL.DTO;
 using webapp.DAL.Enum;
 using webapp.DAL.Models;
 using webapp.DAL.Repositories;
 using webapp.DAL.Tools;
+using User = webapp.DAL.Models.User;
 
 namespace david_api.Controllers
 {
@@ -52,13 +51,20 @@ namespace david_api.Controllers
         [HttpPost(Name = "CreateUser")]
         public async Task<IActionResult> Create([FromBody] UserDTO user)
         {
-            if (!Enum.TryParse(typeof(Roles), user.role, out _))
+            try
             {
-                return new BadRequestObjectResult("role must be one of [admin, petugasLokasi, picLokasi, petugasWarehouse]");
+                if (!Enum.TryParse(typeof(Roles), user.role, out _))
+                {
+                    return new BadRequestObjectResult("role must be one of [admin, petugasLokasi, picLokasi, petugasWarehouse]");
+                }
+                var newuser = mapper.Map<User>(user);
+                await userRepo.CreateWithEncryptedPasswordAsync(newuser);
+                return new OkObjectResult($"user created {newuser.username}");
             }
-            var newuser = mapper.Map<User>(user);
-            await userRepo.CreateWithEncryptedPasswordAsync(newuser);
-            return new OkObjectResult($"user created {newuser.username}");
+            catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+            {
+                return new ConflictObjectResult("Username not unique");
+            }
         }
 
         //login can be done with username or employee id and password
@@ -70,7 +76,7 @@ namespace david_api.Controllers
             if (role != "")
             {
                 var token = TokenService.BuildToken(key, issuer, audience, user.username, role);
-                return new OkObjectResult(new LoginResult(role, token));
+                return new OkObjectResult(new LoginResult(user.username, role, token));
             } 
             else
             {
@@ -92,11 +98,17 @@ namespace david_api.Controllers
         [HttpPut("{id}", Name = "UpdateUser")]
         public async Task<IActionResult> UpdateUser([FromRoute] string id, [FromBody] UserDTO updatedUser)
         {
+            try {
             var user = mapper.Map<User>(updatedUser);
             user.id = id;
             user = await userRepo.UpdateAsync(user);
             return new OkObjectResult(user);
+        } 
+            catch (CosmosException ex) when(ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+        {
+            throw new Exception("Username not unique");
         }
+    }
 
         [Authorize(Roles = "admin")]
         [HttpDelete("{id}", Name = "DeleteUser")]
