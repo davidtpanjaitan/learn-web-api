@@ -5,5 +5,6 @@
         public string jenisMadu { get; set; }
         public double beratPanen { get; set; }
         public DateTime tanggalPanen { get; set; }
+        public string gambarPanenUrl { get; set; }
     }
 }

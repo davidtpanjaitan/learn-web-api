@@ -13,8 +13,10 @@ namespace webapp.DAL.Models
         public string jenisMadu { get; set; }
         public double beratPanen { get; set; }
         public DateTime tanggalPanen { get; set; }
+        public string gambarPanenUrl { get; set; }
         public double beratWarehouse { get; set; }
         public DateTime tanggalWarehouse { get; set; }
+        public string gambarWarehouseUrl { get; set; }
         public string catatanWarehouse { get; set; }
         public string status { get; set; }
         public string idPetugasPanen { get; set; }

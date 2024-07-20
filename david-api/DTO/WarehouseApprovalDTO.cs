@@ -4,5 +4,6 @@
     {
         public string catatan { get; set; }
         public double beratBaru { get; set; }
+        public string gambarWarehouseUrl { get; set; }
     }
 }
