@@ -30,5 +30,16 @@ namespace webapp.DAL.Repositories
             
             return existingUser == null ? "" : existingUser.role;
         }
+
+        public override async Task<User> UpdateAsync(User item)
+        {
+            var user = await base.GetByIdAsync(item.id);
+            user.employeeId = item.employeeId;
+            user.name = item.name;
+            user.username = item.username;
+            user.role = item.role;
+            user.password = EncryptionService.encryptSeeded(item.password);
+            return await base.UpdateAsync(user);
+        }
     }
 }

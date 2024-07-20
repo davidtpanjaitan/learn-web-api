@@ -3,6 +3,9 @@ using webapp.DAL.Repositories;
 using Microsoft.Extensions.Configuration;
 using webapp.DAL.Tools;
 using david_api.Middlewares;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 internal class Program
 {
@@ -39,7 +42,17 @@ internal class Program
             options.AddPolicy("AllowAllOrigin",
                 builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
         });
-
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)),
+                ValidateIssuer = false,
+                ValidateAudience = false
+            };
+        });
 
         var app = builder.Build();
 
@@ -56,6 +69,9 @@ internal class Program
         app.UseHttpsRedirection();
 
         app.UseAuthorization();
+
+        app.UseAuthentication();
+        
 
         app.MapControllers();
 

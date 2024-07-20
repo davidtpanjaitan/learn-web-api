@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using david_api.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 using webapp.DAL.Enum;
 using webapp.DAL.Models;
 using webapp.DAL.Repositories;
@@ -25,6 +27,7 @@ namespace david_api.Controllers
             return new OkObjectResult(res);
         }
 
+        [Authorize(Roles = "petugasWarehouse,admin")]
         [HttpPost(Name = "CreateProduk")]
         public async Task<IActionResult> Create([FromBody] Produk produk)
         {
@@ -32,6 +35,7 @@ namespace david_api.Controllers
             return new OkObjectResult(newproduk);
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPost("generate", Name = "GenerateProduk")]
         public async Task<IActionResult> Generate([FromBody] GenerateProdukDTO dto)
         {
@@ -50,6 +54,7 @@ namespace david_api.Controllers
             return new OkObjectResult(produk);
         }
 
+        [Authorize(Roles = "petugasWarehouse,admin")]
         [HttpPut("{id}", Name = "UpdateProduk")]
         public async Task<IActionResult> UpdateProduk([FromRoute] string id, [FromBody] Produk updatedProduk)
         {
@@ -58,6 +63,7 @@ namespace david_api.Controllers
             return new OkObjectResult(updatedProduk);
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPut("{id}/approve-admin")]
         public async Task<IActionResult> ApproveByAdmin([FromRoute] string id, [FromBody] ApprovalDTO dto)
         {
@@ -65,6 +71,7 @@ namespace david_api.Controllers
             return new OkObjectResult(result);
         }
 
+        [Authorize(Roles = "admin")]
         [HttpDelete("{id}", Name = "DeleteProduk")]
         public async Task<IActionResult> DeleteProduk([FromRoute] string id)
         {

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using david_api.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Newtonsoft.Json;
@@ -33,7 +34,7 @@ namespace david_api.Controllers
             audience = config["jwtaudience"];
             var mappingconfig = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<UserDTO, User>().ForMember(p => p.id, x => x.MapFrom(c => c.employeeId));
+                cfg.CreateMap<UserDTO, User>();
             });
             mapper = mappingconfig.CreateMapper();
 
@@ -46,6 +47,7 @@ namespace david_api.Controllers
             return new OkObjectResult(res);
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPost(Name = "CreateUser")]
         public async Task<IActionResult> Create([FromBody] UserDTO user)
         {
@@ -75,7 +77,6 @@ namespace david_api.Controllers
             }
         }
 
-
         [HttpGet("{id}", Name = "GetUserById")]
         public async Task<IActionResult> Get( [FromRoute] string id)
         {
@@ -88,13 +89,15 @@ namespace david_api.Controllers
         }
 
         [HttpPut("{id}", Name = "UpdateUser")]
-        public async Task<IActionResult> UpdateUser([FromRoute] string id, [FromBody] User updatedUser)
+        public async Task<IActionResult> UpdateUser([FromRoute] string id, [FromBody] UserDTO updatedUser)
         {
-            updatedUser.id = id;
-            await userRepo.UpdateAsync(updatedUser);
-            return new OkObjectResult(updatedUser);
+            var user = mapper.Map<User>(updatedUser);
+            user.id = id;
+            user = await userRepo.UpdateAsync(user);
+            return new OkObjectResult(user);
         }
 
+        [Authorize(Roles = "admin")]
         [HttpDelete("{id}", Name = "DeleteUser")]
         public async Task<IActionResult> DeleteUser([FromRoute] string id)
         {
@@ -102,5 +105,17 @@ namespace david_api.Controllers
             return new OkResult();
         }
 
+        [Authorize(Roles="admin")]
+        [HttpGet("parse-jwt")]
+        public async Task<IActionResult> parse()
+        {
+            var claims = this.User.Claims;
+            var dict = new Dictionary<string, string>();
+            foreach (var c in claims)
+            {
+                dict.Add(c.Type, c.Value);
+            }
+            return new OkObjectResult(dict);
+        }
     }
 }

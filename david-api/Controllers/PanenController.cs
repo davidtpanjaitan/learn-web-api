@@ -1,7 +1,11 @@
-﻿using david_api.DTO;
+﻿using AutoMapper;
+using david_api.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Newtonsoft.Json;
+using System.Data;
+using webapp.DAL.Enum;
 using webapp.DAL.Models;
 using webapp.DAL.Repositories;
 
@@ -11,10 +15,15 @@ namespace david_api.Controllers
     public class PanenController : ControllerBase
     {
         private PanenRepository panenRepo;
-
+        private IMapper mapper;
         public PanenController(PanenRepository panenRepo)
         {
             this.panenRepo = panenRepo;
+            var mappingconfig = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<SubmitPanenDTO, Panen>();
+            });
+            mapper = mappingconfig.CreateMapper();
         }
 
         [HttpGet(Name = "getPagedPanen")]
@@ -31,6 +40,7 @@ namespace david_api.Controllers
             return new OkObjectResult(newpanen);
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPost("generate", Name ="GeneratePanenByLokasi")]
         public async Task<IActionResult> Generate([FromBody] GeneratePanenDTO dto)
         {
@@ -49,6 +59,7 @@ namespace david_api.Controllers
             return new OkObjectResult(panen);
         }
 
+        [Authorize]
         [HttpPut("{id}", Name = "UpdatePanen")]
         public async Task<IActionResult> UpdatePanen([FromRoute] string id, [FromBody] Panen updatedPanen)
         {
@@ -57,12 +68,25 @@ namespace david_api.Controllers
             return new OkObjectResult(updatedPanen);
         }
 
+        [Authorize(Roles = "petugasLokasi,admin")]
+        [HttpPut("{id}/submit-lokasi")]
+        public async Task<IActionResult> SubmitOnLokasi([FromRoute] string id, [FromBody] SubmitPanenDTO dto)
+        {
+            var panen = mapper.Map<Panen>(dto);
+            panen.id = id;
+            var result = await panenRepo.SubmitPanenData(panen);
+            return new OkObjectResult(result);
+        }
+
+        [Authorize(Roles = "picLokasi,admin")]
         [HttpPut("{id}/approve-lokasi")]
         public async Task<IActionResult> ApproveOnLokasi([FromRoute] string id, [FromBody] ApprovalDTO dto)
         {
             var result = await panenRepo.ApprovePanenOnLokasi(id, dto.approve, dto.idApprover, dto.namaApprover);
             return new OkObjectResult(result);
         }
+
+        [Authorize(Roles = "petugasWarehouse,admin")]
         [HttpPut("{id}/approve-warehouse")]
         public async Task<IActionResult> ApproveOnWarehouse([FromRoute] string id, [FromBody] WarehouseApprovalDTO dto)
         {
@@ -70,6 +94,7 @@ namespace david_api.Controllers
             return new OkObjectResult(result);
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPut("{id}/approve-done")]
         public async Task<IActionResult> ApproveByAdmin([FromRoute] string id, [FromBody] ApprovalDTO dto)
         {
