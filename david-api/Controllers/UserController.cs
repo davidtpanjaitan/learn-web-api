@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Newtonsoft.Json;
 using System.Security.Claims;
+using webapp.DAL.DTO;
 using webapp.DAL.Enum;
 using webapp.DAL.Models;
 using webapp.DAL.Repositories;
@@ -69,7 +70,7 @@ namespace david_api.Controllers
             if (role != "")
             {
                 var token = TokenService.BuildToken(key, issuer, audience, user.username, role);
-                return new OkObjectResult(token);
+                return new OkObjectResult(new LoginResult(role, token));
             } 
             else
             {
