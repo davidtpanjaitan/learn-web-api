@@ -14,13 +14,13 @@ namespace webapp.DAL.Repositories
         {
         }
 
-        public async Task<User> CreateWithEncryptedPasswordAsync(User item)
+        public async Task<User> CreateWithEncryptedPasswordAsync(User item, string creator)
         {
             item.password = EncryptionService.encryptSeeded(item.password);
-            return await base.CreateAsync(item);
+            return await base.CreateAsync(item, creator);
         }
 
-        public async Task<string> MatchUserPasswordExist(User item)
+        public async Task<User?> MatchUserPasswordExist(User item)
         {
             var enteredPassword = EncryptionService.encryptSeeded(item.password);
             var existingUserQuery = await _container
@@ -28,7 +28,7 @@ namespace webapp.DAL.Repositories
                 .ReadNextAsync();
             var existingUser = existingUserQuery.FirstOrDefault();
             
-            return existingUser == null ? "" : existingUser.role;
+            return existingUser;
         }
 
         public override async Task<User> UpdateAsync(User item)

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Newtonsoft.Json;
+using System.Security.Claims;
 using webapp.DAL.Enum;
 using webapp.DAL.Models;
 using webapp.DAL.Repositories;
@@ -29,7 +30,8 @@ namespace david_api.Controllers
         [HttpPost(Name = "CreateLokasi")]
         public async Task<IActionResult> Create([FromBody] Lokasi lokasi)
         {
-            var newlokasi = await lokasiRepo.CreateAsync(lokasi);
+            var creator = this.User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.Name)?.Value;
+            var newlokasi = await lokasiRepo.CreateAsync(lokasi, creator);
             return new OkObjectResult(newlokasi);
         }
 

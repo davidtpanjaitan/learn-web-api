@@ -65,11 +65,12 @@ namespace webapp.DAL.Repositories
             return totalCount;
         }
 
-        public virtual async Task<T> CreateAsync(T item)
+        public virtual async Task<T> CreateAsync(T item, string creator = "")
         {
             try
             {
                 item.id = Guid.NewGuid().ToString();
+                item.createdBy = creator;
                 var response = await _container.CreateItemAsync(item, new PartitionKey(partitionKey));
                 return response.Resource;
             }

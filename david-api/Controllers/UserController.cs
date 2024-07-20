@@ -3,6 +3,7 @@ using david_api.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Cosmos;
+using System.Security.Claims;
 using webapp.DAL.DTO;
 using webapp.DAL.Enum;
 using webapp.DAL.Models;
@@ -53,12 +54,13 @@ namespace david_api.Controllers
         {
             try
             {
+                var creator = this.User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.Name)?.Value;
                 if (!Enum.TryParse(typeof(Roles), user.role, out _))
                 {
                     return new BadRequestObjectResult("role must be one of [admin, petugasLokasi, picLokasi, petugasWarehouse]");
                 }
                 var newuser = mapper.Map<User>(user);
-                await userRepo.CreateWithEncryptedPasswordAsync(newuser);
+                await userRepo.CreateWithEncryptedPasswordAsync(newuser, creator);
                 return new OkObjectResult($"user created {newuser.username}");
             }
             catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
@@ -72,11 +74,12 @@ namespace david_api.Controllers
         public async Task<IActionResult> Login([FromBody] UserDTO user)
         {
             var loginDetail = mapper.Map<User>(user);
-            var role = await userRepo.MatchUserPasswordExist(loginDetail);
-            if (role != "")
+            var match = await userRepo.MatchUserPasswordExist(loginDetail);
+            if (match != null)
             {
-                var token = TokenService.BuildToken(key, issuer, audience, user.username, role);
-                return new OkObjectResult(new LoginResult(user.username, role, token));
+                var token = TokenService.BuildToken(key, issuer, audience, user.username, match.role);
+                match.password = "";
+                return new OkObjectResult(new LoginResult(match, token));
             } 
             else
             {

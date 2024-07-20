@@ -17,7 +17,7 @@ namespace webapp.DAL.Repositories
         {
             return "PR" + DateTime.Now.ToString("yyyyMMddHHmmss") + index.ToString("D3");
         }
-        public async Task<List<Produk>> GenerateProduk(int number)
+        public async Task<List<Produk>> GenerateProduk(int number, string creator)
         {
             var batch = _container.CreateTransactionalBatch(new PartitionKey(""));
             var result = new List<Produk>();
@@ -27,6 +27,7 @@ namespace webapp.DAL.Repositories
                 {
                     id = GenerateProdukId(i),
                     status = Constants.ProdukStatus.GENERATED.ToString(),
+                    createdBy = creator
                 };
                 result.Add(produk);
                 batch.CreateItem(produk);
@@ -35,16 +36,31 @@ namespace webapp.DAL.Repositories
             return result;
         }
 
+        public override async Task<Produk> UpdateAsync(Produk item)
+        {
+            var dbItem = await base.GetByIdAsync(item.id);
+            if (dbItem.status == Constants.ProdukStatus.GENERATED.ToString())
+            {
+                dbItem.status = Constants.ProdukStatus.SUBMITTED.ToString();
+            }
+            return await base.UpdateAsync(dbItem);
+        }
+
         public async Task<Produk> ApproveProdukByAdmin(string idProduk, bool approve, string idApprover, string namaApprover)
         {
             var produk = _container.GetItemLinqQueryable<Produk>().First(p => p.id == idProduk);
-            produk.idAdmin = idApprover;
-            produk.namaAdmin = namaApprover;
+            
             if (produk.status == Constants.ProdukStatus.SUBMITTED.ToString() && approve)
             {
                 produk.status = Constants.ProdukStatus.ADMIN_APPROVED.ToString();
+                produk.idAdmin = idApprover;
+                produk.namaAdmin = namaApprover;
+                await _container.UpsertItemAsync(produk);
             }
-            await _container.UpsertItemAsync(produk);
+            else
+            {
+                throw new InvalidOperationException("Admin hanya bisa approve setelah data diisi");
+            }
             return produk;
         }
     }

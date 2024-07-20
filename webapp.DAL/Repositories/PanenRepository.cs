@@ -19,7 +19,7 @@ namespace webapp.DAL.Repositories
             return "PN"+DateTime.Now.ToString("yyyyMMddHHmmss") + index.ToString("D3");
         }
 
-        public async Task<List<Panen>> GeneratePanenForLokasi(string idLokasi, string namaLokasi, int number)
+        public async Task<List<Panen>> GeneratePanenForLokasi(string idLokasi, string namaLokasi, int number, string creator ="")
         {
             var batch = _container.CreateTransactionalBatch(new PartitionKey(""));
             var result = new List<Panen>();
@@ -31,6 +31,7 @@ namespace webapp.DAL.Repositories
                     idLokasi = idLokasi,
                     namaLokasi = namaLokasi,
                     status = Constants.PanenStatus.GENERATED.ToString(),
+                    createdBy = creator
                 };
                 result.Add(panen);
                 batch.CreateItem(panen);
@@ -48,6 +49,8 @@ namespace webapp.DAL.Repositories
                 panen.beratPanen = panenData.beratPanen;
                 panen.jenisMadu = panenData.jenisMadu;
                 panen.tanggalPanen = panenData.tanggalPanen;
+                panen.namaPetugasPanen = panenData.namaPetugasPanen;
+                panen.idPetugasPanen = panenData.idPetugasPanen;
             }
             else
             {

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Newtonsoft.Json;
 using System.Data;
+using System.Security.Claims;
 using webapp.DAL.Enum;
 using webapp.DAL.Models;
 using webapp.DAL.Repositories;
@@ -44,7 +45,8 @@ namespace david_api.Controllers
         [HttpPost("generate", Name ="GeneratePanenByLokasi")]
         public async Task<IActionResult> Generate([FromBody] GeneratePanenDTO dto)
         {
-            var listNewPanen = await panenRepo.GeneratePanenForLokasi(dto.idLokasi, dto.namaLokasi, dto.jumlah);
+            var creator = this.User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.Name)?.Value;
+            var listNewPanen = await panenRepo.GeneratePanenForLokasi(dto.idLokasi, dto.namaLokasi, dto.jumlah, creator);
             return new OkObjectResult(listNewPanen);
         }
 

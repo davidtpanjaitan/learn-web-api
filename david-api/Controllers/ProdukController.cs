@@ -3,6 +3,7 @@ using david_api.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
+using System.Security.Claims;
 using webapp.DAL.Enum;
 using webapp.DAL.Models;
 using webapp.DAL.Repositories;
@@ -39,7 +40,8 @@ namespace david_api.Controllers
         [HttpPost("generate", Name = "GenerateProduk")]
         public async Task<IActionResult> Generate([FromBody] GenerateProdukDTO dto)
         {
-            var listNewProduk = await produkRepo.GenerateProduk(dto.jumlah);
+            var creator = this.User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.Name)?.Value;
+            var listNewProduk = await produkRepo.GenerateProduk(dto.jumlah, creator);
             return new OkObjectResult(listNewProduk);
         }
 
