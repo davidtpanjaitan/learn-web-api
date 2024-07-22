@@ -12,11 +12,11 @@ namespace webapp.DAL.Models
         {
             public string id { get; set;}
             public string namaLokasi { get; set;}
-            public string tanggalPanen { get; set;}
+            public DateTime? tanggalPanen { get; set;}
             public string jenisMadu { get; set;}
-            public string berat { get; set; }
+            public double berat { get; set; }
         }
-        public string tanggal { get; set; }
+        public DateTime? tanggal { get; set; }
         public string status { get; set; }
         public string idPetugasMixing { get; set; }
         public string namaPetugasMixing { get; set; }

@@ -87,6 +87,7 @@ namespace webapp.DAL.Repositories
                 panen.namaPetugasWarehouse = namaApprover;
                 panen.beratWarehouse = beratBaru;
                 panen.catatanWarehouse = catatan;
+                panen.tanggalWarehouse = DateTime.Now;
                 await _container.UpsertItemAsync(panen);
             } 
             else
