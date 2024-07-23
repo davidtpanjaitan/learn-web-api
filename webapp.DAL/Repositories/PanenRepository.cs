@@ -51,6 +51,7 @@ namespace webapp.DAL.Repositories
                 panen.tanggalPanen = panenData.tanggalPanen;
                 panen.namaPetugasPanen = panenData.namaPetugasPanen;
                 panen.idPetugasPanen = panenData.idPetugasPanen;
+                panen.gambarPanenUrl = panenData.gambarPanenUrl;
             }
             else
             {
@@ -77,7 +78,7 @@ namespace webapp.DAL.Repositories
             return panen;
         }
 
-        public async Task<Panen> ApprovePanenOnWarehouse(string idPanen, bool approve, string idApprover, string namaApprover, double beratBaru, string catatan)
+        public async Task<Panen> ApprovePanenOnWarehouse(string idPanen, bool approve, string idApprover, string namaApprover, double beratBaru, string catatan, string gambarWarehouseUrl)
         {
             var panen = _container.GetItemLinqQueryable<Panen>().First(p => p.id == idPanen);
             if (panen.status == Constants.PanenStatus.PIC_APPROVED.ToString() && approve)
@@ -88,6 +89,7 @@ namespace webapp.DAL.Repositories
                 panen.beratWarehouse = beratBaru;
                 panen.catatanWarehouse = catatan;
                 panen.tanggalWarehouse = DateTime.Now;
+                panen.gambarWarehouseUrl = gambarWarehouseUrl;
                 await _container.UpsertItemAsync(panen);
             } 
             else

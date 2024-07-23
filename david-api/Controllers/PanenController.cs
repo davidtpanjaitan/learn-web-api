@@ -9,6 +9,7 @@ using System.Security.Claims;
 using webapp.DAL.Enum;
 using webapp.DAL.Models;
 using webapp.DAL.Repositories;
+using webapp.DAL.Tools;
 
 namespace david_api.Controllers
 {
@@ -72,10 +73,11 @@ namespace david_api.Controllers
 
         [Authorize(Roles = "petugasLokasi,admin")]
         [HttpPut("{id}/submit-lokasi")]
-        public async Task<IActionResult> SubmitOnLokasi([FromRoute] string id, [FromBody] SubmitPanenDTO dto)
+        public async Task<IActionResult> SubmitOnLokasi([FromRoute] string id, [FromForm] SubmitPanenDTO dto)
         {
             var panen = mapper.Map<Panen>(dto);
             panen.id = id;
+            panen.gambarPanenUrl = await ImageHostService.uploadImage(dto.gambar);
             var result = await panenRepo.SubmitPanenData(panen);
             return new OkObjectResult(result);
         }
@@ -92,7 +94,8 @@ namespace david_api.Controllers
         [HttpPut("{id}/approve-warehouse")]
         public async Task<IActionResult> ApproveOnWarehouse([FromRoute] string id, [FromBody] WarehouseApprovalDTO dto)
         {
-            var result = await panenRepo.ApprovePanenOnWarehouse(id, dto.approve, dto.idApprover, dto.namaApprover, dto.beratBaru, dto.catatan);
+            var imageUrl = await ImageHostService.uploadImage(dto.gambar);
+            var result = await panenRepo.ApprovePanenOnWarehouse(id, dto.approve, dto.idApprover, dto.namaApprover, dto.beratBaru, dto.catatan, imageUrl);
             return new OkObjectResult(result);
         }
 
