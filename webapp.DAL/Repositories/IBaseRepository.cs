@@ -12,7 +12,7 @@ namespace webapp.DAL.Repositories
     {
         Task<T> GetByIdAsync(string id);
         Task<List<T>> GetAllAsync();
-        Task<PagedResult<T>> GetAsyncPaged(int pageSize, int pageNumber);
+        Task<PagedResult<T>> GetAsyncPaged(int pageSize, int pageNumber, string query = "");
         Task<T> CreateAsync(T item, string creator = "");
         Task<T> UpdateAsync(T item);
         Task<bool> DeleteAsync(string id);

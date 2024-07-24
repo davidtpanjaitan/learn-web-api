@@ -30,16 +30,16 @@ namespace webapp.DAL.Repositories
             var response = await query.ReadNextAsync();
             return response.ToList();
         }
-        public virtual async Task<PagedResult<T>> GetAsyncPaged(int pageSize, int pageNumber)
+        public virtual async Task<PagedResult<T>> GetAsyncPaged(int pageSize, int pageNumber, string query = "")
         {
-            var query = _container.GetItemQueryIterator<T>(
+            var dbquery = _container.GetItemQueryIterator<T>(
                 new QueryDefinition($"SELECT * FROM c ORDER BY c.createdDate DESC OFFSET {pageNumber*pageSize} LIMIT {pageSize}"),
                 requestOptions: new QueryRequestOptions { MaxItemCount = pageSize, PartitionKey = new PartitionKey(partitionKey) }
             );
 
             List<T> results = new List<T>();
 
-            FeedResponse<T> response = await query.ReadNextAsync();
+            FeedResponse<T> response = await dbquery.ReadNextAsync();
             results.AddRange(response);
                     
             return new PagedResult<T>
@@ -49,7 +49,7 @@ namespace webapp.DAL.Repositories
             };
         }
 
-        private async Task<int> GetTotalCountAsync()
+        protected async Task<int> GetTotalCountAsync()
         {
             var countQuery = _container.GetItemQueryIterator<int>(
                 new QueryDefinition("SELECT VALUE COUNT(1) FROM c")

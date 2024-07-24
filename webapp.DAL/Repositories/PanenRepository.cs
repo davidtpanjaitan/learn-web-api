@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using webapp.DAL.DTO;
 using webapp.DAL.Models;
 
 namespace webapp.DAL.Repositories
@@ -17,6 +18,27 @@ namespace webapp.DAL.Repositories
         private string GeneratePanenId(int index)
         {
             return "PN"+DateTime.Now.ToString("yyyyMMddHHmmss") + index.ToString("D3");
+        }
+
+        public override async Task<PagedResult<Panen>> GetAsyncPaged(int pageSize, int pageNumber, string query = "")
+        {
+            var dbquery = _container.GetItemQueryIterator<Panen>(
+                new QueryDefinition($"SELECT * FROM c WHERE c.status LIKE '%{query}%' OR c.namaLokasi LIKE '%{query}%' OR c.jenisMadu LIKE '%{query}%' OR c.catatanWarehouse LIKE '%{query}%'"
+                + $" OR c.namaPetugasPanen LIKE '%{query}%' OR c.namaPICPanen LIKE '%{query}%' OR c.namaPetugasWarehouse LIKE '%{query}%' OR c.namaAdmin LIKE '%{query}%' OR c.id LIKE '%{query}%'"
+                + $" ORDER BY c.createdDate DESC OFFSET {pageNumber * pageSize} LIMIT {pageSize}"),
+                requestOptions: new QueryRequestOptions { MaxItemCount = pageSize, PartitionKey = new PartitionKey(partitionKey) }
+            );
+
+            List<Panen> results = new List<Panen>();
+
+            FeedResponse<Panen> response = await dbquery.ReadNextAsync();
+            results.AddRange(response);
+
+            return new PagedResult<Panen>
+            {
+                Items = results,
+                TotalCount = await base.GetTotalCountAsync()
+            };
         }
 
         public async Task<List<Panen>> GeneratePanenForLokasi(string idLokasi, string namaLokasi, int number, string creator ="")
