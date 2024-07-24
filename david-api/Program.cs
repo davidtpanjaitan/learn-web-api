@@ -29,7 +29,10 @@ internal class Program
         CosmosClient cosmosClient = new CosmosClient(cosmosDbConnectionString);
 
 
-        builder.Services.AddControllers();
+        builder.Services.AddControllers(options =>
+        {
+            options.Filters.Add<ExceptionHandlerMiddleware>();
+        });
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
