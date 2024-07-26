@@ -16,6 +16,7 @@ namespace webapp.DAL.Models
             public string jenisMadu { get; set;}
             public double berat { get; set; }
         }
+        public string nama { get; set; }
         public DateTime? tanggal { get; set; }
         public string status { get; set; }
         public string idPetugasMixing { get; set; }

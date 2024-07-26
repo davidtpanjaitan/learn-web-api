@@ -70,7 +70,7 @@ namespace webapp.DAL.Repositories
 
         public async Task<Produk> ApproveProdukByAdmin(string idProduk, bool approve, string idApprover, string namaApprover)
         {
-            var produk = _container.GetItemLinqQueryable<Produk>().First(p => p.id == idProduk);
+            var produk = await GetByIdAsync(idProduk);
             
             if (produk.status == Constants.ProdukStatus.SUBMITTED.ToString() && approve)
             {

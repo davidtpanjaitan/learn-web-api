@@ -92,7 +92,7 @@ namespace david_api.Controllers
 
         [Authorize(Roles = "petugasWarehouse,admin")]
         [HttpPut("{id}/approve-warehouse")]
-        public async Task<IActionResult> ApproveOnWarehouse([FromRoute] string id, [FromBody] WarehouseApprovalDTO dto)
+        public async Task<IActionResult> ApproveOnWarehouse([FromRoute] string id, [FromForm] WarehouseApprovalDTO dto)
         {
             var imageUrl = await ImageHostService.uploadImage(dto.gambar);
             var result = await panenRepo.ApprovePanenOnWarehouse(id, dto.approve, dto.idApprover, dto.namaApprover, dto.beratBaru, dto.catatan, imageUrl);

@@ -85,7 +85,7 @@ namespace webapp.DAL.Repositories
 
         public async Task<Panen> ApprovePanenOnLokasi(string idPanen, bool approve, string idApprover, string namaApprover)
         {
-            var panen = _container.GetItemLinqQueryable<Panen>().First(p => p.id == idPanen);
+            var panen = await GetByIdAsync(idPanen);
             if (panen.status == Constants.PanenStatus.SUBMITTED.ToString() && approve)
             {
                 panen.status = Constants.PanenStatus.PIC_APPROVED.ToString();
@@ -102,7 +102,7 @@ namespace webapp.DAL.Repositories
 
         public async Task<Panen> ApprovePanenOnWarehouse(string idPanen, bool approve, string idApprover, string namaApprover, double beratBaru, string catatan, string gambarWarehouseUrl)
         {
-            var panen = _container.GetItemLinqQueryable<Panen>().First(p => p.id == idPanen);
+            var panen = await GetByIdAsync(idPanen);
             if (panen.status == Constants.PanenStatus.PIC_APPROVED.ToString() && approve)
             {
                 panen.status = Constants.PanenStatus.ARRIVED_WAREHOUSE.ToString();
@@ -123,7 +123,7 @@ namespace webapp.DAL.Repositories
 
         public async Task<Panen> ApprovePanenByAdmin(string idPanen, bool approve, string idApprover, string namaApprover)
         {
-            var panen = _container.GetItemLinqQueryable<Panen>().First(p => p.id == idPanen);
+            var panen = await GetByIdAsync(idPanen);
             if (panen.status == Constants.PanenStatus.ARRIVED_WAREHOUSE.ToString() && approve)
             {
                 panen.status = Constants.PanenStatus.ADMIN_CONFIRMED.ToString();
