@@ -61,10 +61,16 @@ namespace webapp.DAL.Repositories
         public override async Task<Produk> UpdateAsync(Produk item)
         {
             var dbItem = await base.GetByIdAsync(item.id);
-            if (dbItem.status == Constants.ProdukStatus.GENERATED.ToString())
+            if (dbItem.status == Constants.ProdukStatus.GENERATED.ToString() || dbItem.status == Constants.ProdukStatus.SUBMITTED.ToString())
             {
                 dbItem.status = Constants.ProdukStatus.SUBMITTED.ToString();
+                dbItem.nama = item.nama;
+                dbItem.tanggal = item.tanggal;
+                dbItem.idPetugasMixing = item.idPetugasMixing;
+                dbItem.namaPetugasMixing = item.namaPetugasMixing;
+                dbItem.listPanen = item.listPanen;
             }
+
             return await base.UpdateAsync(dbItem);
         }
 

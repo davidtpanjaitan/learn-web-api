@@ -61,8 +61,8 @@ namespace david_api.Controllers
         public async Task<IActionResult> UpdateProduk([FromRoute] string id, [FromBody] Produk updatedProduk)
         {
             updatedProduk.id = id;
-            await produkRepo.UpdateAsync(updatedProduk);
-            return new OkObjectResult(updatedProduk);
+            var dbProduk = await produkRepo.UpdateAsync(updatedProduk);
+            return new OkObjectResult(dbProduk);
         }
 
         [Authorize(Roles = "admin")]
