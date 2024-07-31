@@ -49,7 +49,7 @@ namespace webapp.DAL.Repositories
             };
         }
 
-        protected async Task<int> GetTotalCountAsync()
+        protected virtual async Task<int> GetTotalCountAsync()
         {
             var countQuery = _container.GetItemQueryIterator<int>(
                 new QueryDefinition("SELECT VALUE COUNT(1) FROM c")

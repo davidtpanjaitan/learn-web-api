@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Security.Claims;
+using webapp.DAL.DTO;
 using webapp.DAL.Enum;
 using webapp.DAL.Models;
 using webapp.DAL.Repositories;
@@ -79,6 +80,13 @@ namespace david_api.Controllers
         {
             await produkRepo.DeleteAsync(id);
             return new OkResult();
+        }
+
+        [Authorize(Roles = "admin")]
+        [HttpGet("statistics")]
+        public async Task<StatistikResult> Stat()
+        {
+            return await produkRepo.GetStatistik();
         }
 
     }

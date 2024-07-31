@@ -136,5 +136,44 @@ namespace webapp.DAL.Repositories
             }
             return panen;
         }
+
+        protected override async Task<int> GetTotalCountAsync()
+        {
+            var countQuery = _container.GetItemQueryIterator<int>(
+                new QueryDefinition("SELECT VALUE COUNT(1) FROM c WHERE c.status <> 'GENERATED'")
+            );
+
+            int totalCount = 0;
+            while (countQuery.HasMoreResults)
+            {
+                FeedResponse<int> response = await countQuery.ReadNextAsync();
+                totalCount += response.FirstOrDefault();
+            }
+
+            return totalCount;
+        }
+
+        public async Task<StatistikResult> GetStatistik()
+        {
+            var result = new StatistikResult();
+            result.LifetimeItemCount = await GetTotalCountAsync();
+            using (var monthCountQueryIterator = _container.GetItemQueryIterator<Stats>(
+                new QueryDefinition("SELECT COUNT(1) AS ItemCount, c.createdDateYearMonth AS Month FROM (SELECT c.id, SUBSTRING(c.createdDate, 0, 15) AS createdDateYearMonth FROM c WHERE c.status <> 'GENERATED') c GROUP BY c.createdDateYearMonth")
+                ))
+            {
+                while (monthCountQueryIterator.HasMoreResults)
+                {
+                    var response = await monthCountQueryIterator.ReadNextAsync();
+                    foreach (var item in response)
+                    {
+                        result.MonthlyStats.Add(item);
+                    }
+                }
+            }
+            
+            return result;
+        }
+
+
     }
 }
