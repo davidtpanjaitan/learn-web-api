@@ -21,8 +21,9 @@ namespace webapp.DAL.Repositories
 
         public override async Task<PagedResult<Produk>> GetAsyncPaged(int pageSize, int pageNumber, string query = "")
         {
+            query = query.ToLower();
             var dbquery = _container.GetItemQueryIterator<Produk>(
-                new QueryDefinition($"SELECT * FROM c WHERE c.status LIKE '%{query}%' OR c.namaPetugasMixing LIKE '%{query}%' OR c.namaAdmin LIKE '%{query}%' OR c.id LIKE '%{query}%'"
+                new QueryDefinition($"SELECT * FROM c WHERE LOWER(c.status) LIKE '%{query}%' OR LOWER(c.namaPetugasMixing) LIKE '%{query}%' OR LOWER(c.namaAdmin) LIKE '%{query}%' OR LOWER(c.id) LIKE '%{query}%'"
                 + $" ORDER BY c.createdDate DESC OFFSET {pageNumber * pageSize} LIMIT {pageSize}"),
                 requestOptions: new QueryRequestOptions { MaxItemCount = pageSize, PartitionKey = new PartitionKey(partitionKey) }
             );
@@ -113,7 +114,7 @@ namespace webapp.DAL.Repositories
             var result = new StatistikResult();
             result.LifetimeItemCount = await GetTotalCountAsync();
             using (var monthCountQueryIterator = _container.GetItemQueryIterator<Stats>(
-                new QueryDefinition("SELECT COUNT(1) AS ItemCount, c.createdDateYearMonth AS Month FROM (SELECT c.id, SUBSTRING(c.createdDate, 0, 15) AS createdDateYearMonth FROM c WHERE c.status <> 'GENERATED') c GROUP BY c.createdDateYearMonth")
+                new QueryDefinition("SELECT COUNT(1) AS ItemCount, c.createdDateYearMonth AS Month FROM (SELECT c.id, SUBSTRING(c.createdDate, 0, 7) AS createdDateYearMonth FROM c WHERE c.status <> 'GENERATED') c GROUP BY c.createdDateYearMonth")
                 ))
             {
                 while (monthCountQueryIterator.HasMoreResults)

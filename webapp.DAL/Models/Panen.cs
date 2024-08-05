@@ -15,6 +15,7 @@ namespace webapp.DAL.Models
         public DateTime tanggalPanen { get; set; }
         public string gambarPanenUrl { get; set; }
         public double beratWarehouse { get; set; }
+        public double beratSisa { get; set; }
         public DateTime tanggalWarehouse { get; set; }
         public string gambarWarehouseUrl { get; set; }
         public string catatanWarehouse { get; set; }

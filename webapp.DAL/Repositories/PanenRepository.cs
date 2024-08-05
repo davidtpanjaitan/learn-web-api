@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using webapp.DAL.DTO;
 using webapp.DAL.Models;
+using static webapp.DAL.Models.Produk;
 
 namespace webapp.DAL.Repositories
 {
@@ -22,9 +23,11 @@ namespace webapp.DAL.Repositories
 
         public override async Task<PagedResult<Panen>> GetAsyncPaged(int pageSize, int pageNumber, string query = "")
         {
+
+            query = query.ToLower();
             var dbquery = _container.GetItemQueryIterator<Panen>(
-                new QueryDefinition($"SELECT * FROM c WHERE c.status LIKE '%{query}%' OR c.namaLokasi LIKE '%{query}%' OR c.jenisMadu LIKE '%{query}%' OR c.catatanWarehouse LIKE '%{query}%'"
-                + $" OR c.namaPetugasPanen LIKE '%{query}%' OR c.namaPICPanen LIKE '%{query}%' OR c.namaPetugasWarehouse LIKE '%{query}%' OR c.namaAdmin LIKE '%{query}%' OR c.id LIKE '%{query}%'"
+                new QueryDefinition($"SELECT * FROM c WHERE LOWER(c.status) LIKE '%{query}%' OR LOWER(c.namaLokasi) LIKE '%{query}%' OR LOWER(c.jenisMadu) LIKE '%{query}%' OR LOWER(c.catatanWarehouse) LIKE '%{query}%'"
+                + $" OR LOWER(c.namaPetugasPanen) LIKE '%{query}%' OR LOWER(c.namaPICPanen) LIKE '%{query}%' OR LOWER(c.namaPetugasWarehouse) LIKE '%{query}%' OR LOWER(c.namaAdmin) LIKE '%{query}%' OR LOWER(c.id) LIKE '%{query}%'"
                 + $" ORDER BY c.createdDate DESC OFFSET {pageNumber * pageSize} LIMIT {pageSize}"),
                 requestOptions: new QueryRequestOptions { MaxItemCount = pageSize, PartitionKey = new PartitionKey(partitionKey) }
             );
@@ -129,6 +132,7 @@ namespace webapp.DAL.Repositories
                 panen.status = Constants.PanenStatus.ADMIN_CONFIRMED.ToString();
                 panen.idAdmin = idApprover;
                 panen.namaAdmin = namaApprover;
+                panen.beratSisa = panen.beratWarehouse;
                 await _container.UpsertItemAsync(panen);
             } else
             {
@@ -153,12 +157,34 @@ namespace webapp.DAL.Repositories
             return totalCount;
         }
 
+        public async Task UpdateListPanen(List<PanenItem> panenList)
+        {
+            var batch = _container.CreateTransactionalBatch(new PartitionKey(""));
+            foreach (var  panen in panenList)
+            {
+                await UsePanenForMixing(panen.id, panen.berat, batch);
+            }
+            await batch.ExecuteAsync();
+        }
+
+        public async Task UsePanenForMixing(string panenId, double useAmount, TransactionalBatch? batch = null)
+        {
+            var panen = await GetByIdAsync(panenId);
+            panen.beratSisa -= useAmount;
+            if (panen.beratSisa < 0)
+                panen.beratSisa = 0;
+            if (batch != null)
+                batch.UpsertItem(panen);
+            else
+                await UpdateAsync(panen);
+        }
+
         public async Task<StatistikResult> GetStatistik()
         {
             var result = new StatistikResult();
             result.LifetimeItemCount = await GetTotalCountAsync();
             using (var monthCountQueryIterator = _container.GetItemQueryIterator<Stats>(
-                new QueryDefinition("SELECT COUNT(1) AS ItemCount, c.createdDateYearMonth AS Month FROM (SELECT c.id, SUBSTRING(c.createdDate, 0, 15) AS createdDateYearMonth FROM c WHERE c.status <> 'GENERATED') c GROUP BY c.createdDateYearMonth")
+                new QueryDefinition("SELECT COUNT(1) AS ItemCount, c.createdDateYearMonth AS Month FROM (SELECT c.id, SUBSTRING(c.createdDate, 0, 7) AS createdDateYearMonth FROM c WHERE c.status <> 'GENERATED') c GROUP BY c.createdDateYearMonth")
                 ))
             {
                 while (monthCountQueryIterator.HasMoreResults)
