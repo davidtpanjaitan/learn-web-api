@@ -30,7 +30,7 @@ namespace david_api.Controllers
         }
 
         [HttpGet(Name = "getPagedPanen")]
-        public async Task<IActionResult> GetAllPanen(int pageSize, int pageNum, string query)
+        public async Task<IActionResult> GetAllPanen(int pageSize, int pageNum, string query = "")
         {
             var res = await panenRepo.GetAsyncPaged(pageSize, pageNum - 1, query);
             return new OkObjectResult(res);

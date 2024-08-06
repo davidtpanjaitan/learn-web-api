@@ -25,7 +25,7 @@ namespace david_api.Controllers
         }
 
         [HttpGet(Name = "getPagedProduk")]
-        public async Task<IActionResult> GetAllProduk(int pageSize, int pageNum, string query)
+        public async Task<IActionResult> GetAllProduk(int pageSize, int pageNum, string query = "")
         {
             var res = await produkRepo.GetAsyncPaged(pageSize, pageNum - 1, query);
             return new OkObjectResult(res);
