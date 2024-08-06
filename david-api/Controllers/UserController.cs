@@ -57,7 +57,7 @@ namespace david_api.Controllers
                 var creator = this.User.Claims.FirstOrDefault(p => p.Type == ClaimTypes.Name)?.Value;
                 if (!Enum.TryParse(typeof(Roles), user.role, out _))
                 {
-                    return new BadRequestObjectResult("role must be one of [admin, petugasLokasi, picLokasi, petugasWarehouse]");
+                    return new BadRequestObjectResult("role must be one of [admin, petugasLokasi, picLokasi, petugasWarehouse, petugasProduksi]");
                 }
                 var newuser = mapper.Map<User>(user);
                 await userRepo.CreateWithEncryptedPasswordAsync(newuser, creator);

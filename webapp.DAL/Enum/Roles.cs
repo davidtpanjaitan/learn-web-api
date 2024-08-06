@@ -8,6 +8,6 @@ namespace webapp.DAL.Enum
 {
     public enum Roles
     {
-        admin, petugasLokasi, picLokasi, petugasWarehouse
+        admin, petugasLokasi, picLokasi, petugasWarehouse, petugasProduksi
     }
 }

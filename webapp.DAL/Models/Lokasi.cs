@@ -12,5 +12,7 @@ namespace webapp.DAL.Models
         public string namaPetani { get; set; }
         public string lokasiLengkap { get; set; }
         public string koordinat { get; set; }
+        public int jumlahKoloniSingle { get; set; }
+        public int jumlahKoloniSuper { get; set; }
     }
 }

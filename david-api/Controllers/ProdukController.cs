@@ -31,7 +31,7 @@ namespace david_api.Controllers
             return new OkObjectResult(res);
         }
 
-        [Authorize(Roles = "petugasWarehouse,admin")]
+        [Authorize(Roles = "petugasProduksi,admin")]
         [HttpPost(Name = "CreateProduk")]
         public async Task<IActionResult> Create([FromBody] Produk produk)
         {
@@ -59,7 +59,7 @@ namespace david_api.Controllers
             return new OkObjectResult(produk);
         }
 
-        [Authorize(Roles = "petugasWarehouse,admin")]
+        [Authorize(Roles = "petugasProduksi,admin")]
         [HttpPut("{id}", Name = "UpdateProduk")]
         public async Task<IActionResult> UpdateProduk([FromRoute] string id, [FromBody] Produk updatedProduk)
         {

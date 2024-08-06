@@ -12,6 +12,8 @@ namespace webapp.DAL.Models
         public string namaLokasi { get; set; }
         public string jenisMadu { get; set; }
         public double beratPanen { get; set; }
+        public int jumlahDrum { get; set; }
+        public int jumlahDirigen { get; set; }
         public DateTime tanggalPanen { get; set; }
         public string gambarPanenUrl { get; set; }
         public double beratWarehouse { get; set; }
