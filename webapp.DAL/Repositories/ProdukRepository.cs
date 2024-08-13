@@ -23,7 +23,7 @@ namespace webapp.DAL.Repositories
         {
             query = query.ToLower();
             var dbquery = _container.GetItemQueryIterator<Produk>(
-                new QueryDefinition($"SELECT * FROM c WHERE LOWER(c.nama) LIKE '%{query}%' LOWER(c.status) LIKE '%{query}%' OR LOWER(c.namaPetugasMixing) LIKE '%{query}%' OR LOWER(c.namaAdmin) LIKE '%{query}%' OR LOWER(c.id) LIKE '%{query}%'"
+                new QueryDefinition($"SELECT * FROM c WHERE LOWER(c.nama) LIKE '%{query}%' OR LOWER(c.status) LIKE '%{query}%' OR LOWER(c.namaPetugasMixing) LIKE '%{query}%' OR LOWER(c.namaAdmin) LIKE '%{query}%' OR LOWER(c.id) LIKE '%{query}%'"
                 + $" ORDER BY c.createdDate DESC OFFSET {pageNumber * pageSize} LIMIT {pageSize}"),
                 requestOptions: new QueryRequestOptions { MaxItemCount = pageSize, PartitionKey = new PartitionKey(partitionKey) }
             );

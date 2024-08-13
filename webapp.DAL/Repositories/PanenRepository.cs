@@ -77,6 +77,8 @@ namespace webapp.DAL.Repositories
                 panen.namaPetugasPanen = panenData.namaPetugasPanen;
                 panen.idPetugasPanen = panenData.idPetugasPanen;
                 panen.gambarPanenUrl = panenData.gambarPanenUrl;
+                panen.jumlahDirigen = panenData.jumlahDirigen;
+                panen.jumlahDrum = panenData.jumlahDrum;
             }
             else
             {

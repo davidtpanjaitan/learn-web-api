@@ -72,7 +72,7 @@ namespace david_api.Controllers
             return new OkObjectResult(updatedPanen);
         }
 
-        [Authorize(Roles = "petugasLokasi,admin")]
+        [Authorize(Roles = "petugasLokasi,picLokasi,admin")]
         [HttpPut("{id}/submit-lokasi")]
         public async Task<IActionResult> SubmitOnLokasi([FromRoute] string id, [FromForm] SubmitPanenDTO dto)
         {
