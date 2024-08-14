@@ -38,7 +38,10 @@ namespace webapp.DAL.Repositories
             user.name = item.name;
             user.username = item.username;
             user.role = item.role;
-            user.password = EncryptionService.encryptSeeded(item.password);
+            if (item.password != null && item.password.TrimStart() != "") 
+            { 
+                user.password = EncryptionService.encryptSeeded(item.password);
+            }
             return await base.UpdateAsync(user);
         }
     }
