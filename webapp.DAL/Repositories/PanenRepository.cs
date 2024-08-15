@@ -76,7 +76,10 @@ namespace webapp.DAL.Repositories
                 panen.tanggalPanen = panenData.tanggalPanen;
                 panen.namaPetugasPanen = panenData.namaPetugasPanen;
                 panen.idPetugasPanen = panenData.idPetugasPanen;
-                panen.gambarPanenUrl = panenData.gambarPanenUrl;
+                if (panenData.gambarPanenUrl != null && panenData.gambarPanenUrl.Length > 0)
+                {
+                    panen.gambarPanenUrl = panenData.gambarPanenUrl;
+                }
                 panen.jumlahDirigen = panenData.jumlahDirigen;
                 panen.jumlahDrum = panenData.jumlahDrum;
             }
@@ -116,7 +119,10 @@ namespace webapp.DAL.Repositories
                 panen.beratWarehouse = beratBaru;
                 panen.catatanWarehouse = catatan;
                 panen.tanggalWarehouse = DateTime.Now;
-                panen.gambarWarehouseUrl = gambarWarehouseUrl;
+                if (gambarWarehouseUrl != null && gambarWarehouseUrl.Length > 0) 
+                { 
+                    panen.gambarWarehouseUrl = gambarWarehouseUrl;
+                }
                 await _container.UpsertItemAsync(panen);
             } 
             else

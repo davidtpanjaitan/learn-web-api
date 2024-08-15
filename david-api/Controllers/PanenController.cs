@@ -78,7 +78,10 @@ namespace david_api.Controllers
         {
             var panen = mapper.Map<Panen>(dto);
             panen.id = id;
-            panen.gambarPanenUrl = await ImageHostService.uploadImage(dto.gambar);
+            if (dto.gambar != null && dto.gambar.Length > 0)
+            {
+                panen.gambarPanenUrl = await ImageHostService.uploadImage(dto.gambar);
+            }
             var result = await panenRepo.SubmitPanenData(panen);
             return new OkObjectResult(result);
         }
@@ -95,7 +98,11 @@ namespace david_api.Controllers
         [HttpPut("{id}/approve-warehouse")]
         public async Task<IActionResult> ApproveOnWarehouse([FromRoute] string id, [FromForm] WarehouseApprovalDTO dto)
         {
-            var imageUrl = await ImageHostService.uploadImage(dto.gambar);
+            var imageUrl = "";
+            if (dto.gambar != null && dto.gambar.Length > 0)
+            {
+                imageUrl = await ImageHostService.uploadImage(dto.gambar);
+            }
             var result = await panenRepo.ApprovePanenOnWarehouse(id, dto.approve, dto.idApprover, dto.namaApprover, dto.beratBaru, dto.catatan, imageUrl);
             return new OkObjectResult(result);
         }
