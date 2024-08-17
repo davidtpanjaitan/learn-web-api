@@ -19,6 +19,9 @@ namespace webapp.DAL.Models
         public string nama { get; set; }
         public DateTime? tanggal { get; set; }
         public string status { get; set; }
+        public int jumlahDirigen { get; set; }
+        public int jumlahTangki { get; set; }
+        public int jumlahDrum { get; set; }
         public string idPetugasMixing { get; set; }
         public string namaPetugasMixing { get; set; }
         public string idAdmin { get; set; }

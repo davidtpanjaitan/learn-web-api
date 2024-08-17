@@ -180,7 +180,7 @@ namespace webapp.DAL.Repositories
             var panen = await GetByIdAsync(panenId);
             panen.beratSisa -= useAmount;
             if (panen.beratSisa < 0)
-                panen.beratSisa = 0;
+                throw new InvalidOperationException("Berat dipakai lebih dari berat sisa");
             if (batch != null)
                 batch.UpsertItem(panen);
             else

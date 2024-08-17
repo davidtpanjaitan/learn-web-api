@@ -73,8 +73,7 @@ namespace david_api.Controllers
         public async Task<IActionResult> ApproveByAdmin([FromRoute] string id, [FromBody] ApprovalDTO dto)
         {
             var result = await produkRepo.ApproveProdukByAdmin(id, dto.approve, dto.idApprover, dto.namaApprover);
-            await panenRepo.UpdateListPanen(result.listPanen);
-
+            
             return new OkObjectResult(result);
         }
 

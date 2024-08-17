@@ -1,4 +1,5 @@
 ﻿using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Cosmos.Serialization.HybridRow;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +12,10 @@ namespace webapp.DAL.Repositories
 {
     public class ProdukRepository : BaseRepository<Produk>
     {
+        PanenRepository panenRepository;
         public ProdukRepository(CosmosClient client, string databaseName) : base(client, databaseName)
         {
+            panenRepository = new PanenRepository(client, databaseName);
         }
         private string GenerateProdukId(int index)
         {
@@ -70,6 +73,9 @@ namespace webapp.DAL.Repositories
                 dbItem.idPetugasMixing = item.idPetugasMixing;
                 dbItem.namaPetugasMixing = item.namaPetugasMixing;
                 dbItem.listPanen = item.listPanen;
+                dbItem.jumlahDirigen = item.jumlahDirigen;
+                dbItem.jumlahDrum = item.jumlahDrum;
+                dbItem.jumlahTangki = item.jumlahTangki;
             }
 
             return await base.UpdateAsync(dbItem);
@@ -84,6 +90,7 @@ namespace webapp.DAL.Repositories
                 produk.status = Constants.ProdukStatus.ADMIN_APPROVED.ToString();
                 produk.idAdmin = idApprover;
                 produk.namaAdmin = namaApprover;
+                await panenRepository.UpdateListPanen(produk.listPanen);
                 await _container.UpsertItemAsync(produk);
             }
             else
