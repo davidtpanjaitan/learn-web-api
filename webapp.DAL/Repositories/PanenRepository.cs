@@ -14,6 +14,7 @@ namespace webapp.DAL.Repositories
     {
         public PanenRepository(CosmosClient client, string databaseName) : base(client, databaseName)
         {
+
         }
 
         private string GeneratePanenId(int index)
@@ -23,7 +24,6 @@ namespace webapp.DAL.Repositories
 
         public override async Task<PagedResult<Panen>> GetAsyncPaged(int pageSize, int pageNumber, string query = "")
         {
-
             query = query.ToLower();
             var dbquery = _container.GetItemQueryIterator<Panen>(
                 new QueryDefinition($"SELECT * FROM c WHERE LOWER(c.status) LIKE '%{query}%' OR LOWER(c.namaLokasi) LIKE '%{query}%' OR LOWER(c.jenisMadu) LIKE '%{query}%' OR LOWER(c.catatanWarehouse) LIKE '%{query}%'"

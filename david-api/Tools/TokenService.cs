@@ -25,7 +25,7 @@ namespace webapp.DAL.Tools
             var token = new JwtSecurityToken(issuer,
               audience,
               claims,
-              expires: DateTime.Now.AddDays(1),
+              expires: DateTime.Now.AddDays(365),
               signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
@@ -38,7 +38,6 @@ namespace webapp.DAL.Tools
             {
                 ValidateIssuer = true,
                 ValidateAudience = true,
-                ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
                 ValidIssuer = issuer,
                 ValidAudience = audience,
